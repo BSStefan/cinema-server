@@ -8,6 +8,7 @@ use App\Repositories\MovieRepository;
 use App\Services\CrawlerService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse as JsonIllResponse;
 
 class CrawlerController extends Controller
 {
@@ -27,7 +28,7 @@ class CrawlerController extends Controller
         $this->movieRepository  = $movieRepository;
     }
 
-    public function getCurrentInCinema(Request $request)
+    public function getCurrentInCinema(Request $request) : JsonIllResponse
     {
         $validated = $this->validate($request, [
             'cinema_id' => 'required|integer'

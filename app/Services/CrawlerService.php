@@ -28,17 +28,17 @@ class CrawlerService
         $this->movieRepository = $movieRepository;
     }
 
-    public function currentInCinema(Model $cinema)
+    public function currentInCinema(Model $cinema) : array
     {
         $cinemaCrawler = $this->app->make($cinema->crawler);
         $movies = $cinemaCrawler->findCurrentMovies($cinema->page_url);
         for($i=0; $i<count($movies); $i++){
             try{
-                $movieModel = $this->movieRepository->findBy('original_title', $movies[$i]['title']);
+                $movieModel = $this->movieRepository->findBy('original_title', $movies[$i]['original_title']);
                 $movies[$i]['in_db'] = true;
             }
             catch(ModelNotFoundException $exception){
-                $movies[$i]['in_db'] = true;
+                $movies[$i]['in_db'] = false;
             }
         }
 

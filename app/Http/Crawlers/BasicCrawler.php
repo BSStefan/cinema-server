@@ -43,9 +43,17 @@ abstract class BasicCrawler implements CinemaCrawler
      * @param  string $url
      * @return CinemaCrawler
      */
-    public function getPageHtml($url) : CinemaCrawler
+    public function getPageHtml(string $url) : CinemaCrawler
     {
         @$this->DOMDocument->loadHTML(@file_get_contents($url, false, $this->context));
         return $this;
+    }
+
+    /**
+     * @return DOMDocument
+     */
+    public function getDomDocument() : DOMDocument
+    {
+        return $this->DOMDocument;
     }
 }
