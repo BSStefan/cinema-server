@@ -19,4 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'admin'], function (){
     Route::get('/current-in-cinema', 'Admin\CrawlerController@getCurrentInCinema');
+    Route::get('/soon-in-cinema', 'Admin\CrawlerController@getSoonInCinema');
+    Route::post('/save-projections', 'Admin\CrawlerController@postProjections');
 });

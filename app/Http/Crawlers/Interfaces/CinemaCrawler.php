@@ -11,4 +11,6 @@ interface CinemaCrawler
     public function findCurrentProjections() : array;
 
     public function getDomDocument() : \DOMDocument;
+
+    public function findSoonMovies(string $url) : array;
 }

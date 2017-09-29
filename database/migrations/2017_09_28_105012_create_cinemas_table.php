@@ -21,6 +21,7 @@ class CreateCinemasTable extends Migration
             $table->string('city');
             $table->text('crawler_link');
             $table->text('page_url');
+            $table->text('soon_url');
             $table->text('crawler');
             $table->timestamps();
         });

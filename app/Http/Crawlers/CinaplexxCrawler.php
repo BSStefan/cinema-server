@@ -2,6 +2,8 @@
 
 namespace App\Http\Crawlers;
 
+use App\Exceptions\CrawlerException;
+
 class CinaplexxCrawler extends BasicCrawler
 {
 
@@ -14,20 +16,34 @@ class CinaplexxCrawler extends BasicCrawler
         $movies    = [];
         $movieUrls = $this->findLinksForDetails($url);
         foreach($movieUrls as $movieUrl){
-            $tables = $this->getPageHtml($movieUrl)
-                ->getDomDocument()
-                ->getElementsByTagName('table');
-            foreach($tables as $table){
-                $tr = $table->firstChild;
-                foreach($tr->childNodes as $td){
-                    if($td instanceof \DOMElement && $td->nodeValue != 'Originalni naslov:'){
-                        array_push($movies, ['original_title' => $td->nodeValue]);
-                    }
-                }
+            try{
+                $domDocument = $this->getPageHtml($movieUrl)->getDomDocument();
+                $originalTitle = $this->findOriginalTitle($domDocument);
+                $description = $this->findDescription($domDocument);
+                $startDate     = $this->findStartDate($domDocument);
             }
+            catch(CrawlerException $exception){
+                $originalTitle = 'Error';
+                $description   = 'Error';
+                $startDate     = 'Error';
+            }
+            $movies[] = [
+                'original_title' => $originalTitle,
+                'description'    => $description,
+                'start_date'     => $startDate
+            ];
         }
 
         return $movies;
+    }
+
+    /**
+     * @param string $url
+     * @return array
+     */
+    public function findSoonMovies(string $url) : array
+    {
+        return $this->findCurrentMovies($url);
     }
 
     /**
@@ -56,5 +72,58 @@ class CinaplexxCrawler extends BasicCrawler
         }
 
         return $urls;
+    }
+
+    /**
+     * @param \DOMDocument $domDocument
+     * @return string
+     * @throws CrawlerException
+     */
+    private function findOriginalTitle(\DOMDocument $domDocument) : string
+    {
+        $tables = $domDocument->getElementsByTagName('table');
+        foreach($tables as $table){
+            $tr = $table->firstChild;
+            foreach($tr->childNodes as $td){
+                if($td instanceof \DOMElement && $td->nodeValue != 'Originalni naslov:'){
+                    return $td->nodeValue;
+                }
+            }
+        }
+        throw new CrawlerException("Can't find title.", 1);
+    }
+
+    /**
+     * @param \DOMDocument $domDocument
+     * @return string
+     * @throws CrawlerException
+     */
+    private function findDescription(\DOMDocument $domDocument) : string
+    {
+        $divs = $domDocument->getElementsByTagName('div');
+        foreach($divs as $div){
+            $class = $div->getAttribute('class');
+            if(strpos($class,'two-columns') !== false){
+                $p                = $div->getElementsByTagName('p');
+                $movieDescription = $p[0]->nodeValue;
+                return $movieDescription;
+            }
+        }
+        throw new CrawlerException("Can't find description.", 1);
+    }
+
+    /**
+     * @param \DOMDocument $domDocument
+     * @return string
+     * @throws CrawlerException
+     */
+    private function findStartDate(\DOMDocument $domDocument) : string
+    {
+        $tables = $domDocument->getElementsByTagName('table');
+        foreach($tables as $table){
+            $trs = $table->childNodes;
+            return $trs[1]->childNodes[2]->nodeValue;
+        }
+        throw new CrawlerException("Can't find title.", 1);
     }
 }

@@ -28,6 +28,10 @@ class CrawlerController extends Controller
         $this->movieRepository  = $movieRepository;
     }
 
+    /**
+     * @param Request $request
+     * @return JsonIllResponse
+     */
     public function getCurrentInCinema(Request $request) : JsonIllResponse
     {
         $validated = $this->validate($request, [
@@ -37,5 +41,39 @@ class CrawlerController extends Controller
         $movies = $this->crawlerService->currentInCinema($cinema);
 
         return response()->json(new JsonResponse($movies));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonIllResponse
+     */
+    public function getSoonInCinema(Request $request) : JsonIllResponse
+    {
+        $validated = $this->validate($request, [
+            'cinema_id' => 'required|integer'
+        ]);
+        $cinema = $this->cinemaRepository->find($validated['cinema_id']);
+        $movies = $this->crawlerService->soonInCinema($cinema);
+
+        return response()->json(new JsonResponse($movies));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonIllResponse
+     */
+    public function postProjections(Request $request): JsonIllResponse
+    {
+        $validated = $this->validate($request, [
+            'cinema_id' => 'required|integer'
+        ]);
+        $cinema    = $this->cinemaRepository->find($validated['cinema_id']);
+        $saved     = $this->crawlerService->saveAllProjections($cinema);
+
+        if($saved){
+            return response()->json(new JsonResponse(['success' => true], '', 201), 201);
+        }
+
+        return response()->json(new JsonResponse(['success' => false], '', 404), 404);
     }
 }

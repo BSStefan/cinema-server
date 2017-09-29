@@ -4,17 +4,17 @@ namespace App\Repositories\Interfaces;
 
 interface Repository
 {
-    public function all($columns);
+    public function all(array $columns);
 
-    public function paginate($perPage, $columns);
+    public function paginate(int $perPage, array $columns);
 
-    public function save(array $data, $id);
+    public function save(array $data, int $id);
 
-    public function delete($id);
+    public function delete(int $id);
 
-    public function find($id, $columns);
+    public function find(int $id, array $columns);
 
-    public function findBy($field, $value, $columns);
+    public function findBy(string $field, string $value, array $columns);
 
     public function count();
 
