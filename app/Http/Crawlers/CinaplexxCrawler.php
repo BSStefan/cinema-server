@@ -47,12 +47,73 @@ class CinaplexxCrawler extends BasicCrawler
     }
 
     /**
+     * @param string $url
      * @return array
      */
-    public function findCurrentProjections() : array
+    public function findCurrentProjections(string $url) : array
     {
-
-        return [];
+        $domDocument = $this->getPageHtml($url)->getDomDocument();
+        $cinema = null;
+        $date = null;
+        $movies  = [];
+        $selects = $domDocument->getElementsByTagName('select');
+        $divs    = $domDocument->getElementsByTagName('div');
+        foreach($selects as $select){
+            $name = $select->getAttribute('name');
+            if($name == 'centerId'){
+                $options = $select->getElementsByTagName('option');
+                foreach($options as $option){
+                    if($option->hasAttribute('selected')){
+                        $cinema = $option->nodeValue;
+                    }
+                }
+            }
+            if($name == 'date'){
+                $options = $select->getElementsByTagName('option');
+                foreach($options as $option){
+                    if($option->hasAttribute('selected')){
+                        $date = $option->getAttribute('value');
+                    }
+                }
+            }
+        }
+        foreach($divs as $div){
+            $classes = $div->getAttribute('class');
+            if(strpos($classes, 'overview-element') !== false){
+                $movieTitle = '';
+                $childDivs  = $div->getElementsByTagName('div');
+                foreach($childDivs as $childDiv){
+                    $childClasses = $childDiv->getAttribute('class');
+                    if(strpos($childClasses, 'starBoxSmall') !== false){
+                        $pTags      = $div->getElementsByTagName('p');
+                        $movieTitle = $pTags[1]->nodeValue;
+                    }
+                    if(strpos($childClasses, 'start-times') !== false){
+                        $aTags = $childDiv->getElementsByTagName('a');
+                        foreach($aTags as $a){
+                            $movieTime        = [
+                                'title'  => utf8_decode($movieTitle),
+                                'cinema' => $cinema,
+                                'date'   => $date
+                            ];
+                            $pTags            = $a->getElementsByTagName('p');
+                            $movieTime['url'] = trim($a->getAttribute('href'));
+                            foreach($pTags as $p){
+                                $class = $p->getAttribute('class');
+                                if(strpos($class, 'time-desc') !== false){
+                                    $movieTime['time'] = trim($p->nodeValue);
+                                }
+                                else if(strpos($class, 'room-desc') !== false){
+                                    $movieTime['room'] = trim($p->nodeValue);
+                                }
+                            }
+                            array_push($movies, $movieTime);
+                        }
+                    }
+                }
+            }
+        }
+        return $movies;
     }
 
     /**

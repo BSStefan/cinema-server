@@ -67,13 +67,9 @@ class CrawlerController extends Controller
         $validated = $this->validate($request, [
             'cinema_id' => 'required|integer'
         ]);
-        $cinema    = $this->cinemaRepository->find($validated['cinema_id']);
-        $saved     = $this->crawlerService->saveAllProjections($cinema);
+        $cinema          = $this->cinemaRepository->find($validated['cinema_id']);
+        $projections     = $this->crawlerService->findAllProjections($cinema);
 
-        if($saved){
-            return response()->json(new JsonResponse(['success' => true], '', 201), 201);
-        }
-
-        return response()->json(new JsonResponse(['success' => false], '', 404), 404);
+        return response()->json(new JsonResponse($projections));
     }
 }

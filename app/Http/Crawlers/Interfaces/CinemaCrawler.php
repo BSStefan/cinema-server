@@ -6,11 +6,12 @@ interface CinemaCrawler
 {
     public function getPageHtml(string $url) : CinemaCrawler;
 
-    public function findCurrentMovies(string $url) : array;
-
-    public function findCurrentProjections() : array;
-
     public function getDomDocument() : \DOMDocument;
 
+    public function findCurrentMovies(string $url) : array;
+
     public function findSoonMovies(string $url) : array;
+
+    public function findCurrentProjections(string $url) : array;
+    
 }
