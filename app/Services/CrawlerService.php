@@ -68,6 +68,10 @@ class CrawlerService
         return $movies;
     }
 
+    /**
+     * @param Cinema $cinema
+     * @return array
+     */
     public function findAllProjections(Cinema $cinema) : array
     {
         $cinemaCrawler = $this->crawlerFactory->make($cinema->crawler);
@@ -77,12 +81,10 @@ class CrawlerService
             $url                 = str_replace('*', $date, $cinema->crawler_link);
             $weekProjections[$date] = $cinemaCrawler->findCurrentProjections($url);
         }
-        var_dump($weekProjections); exit;
 
         return $weekProjections;
 
     }
-
 
     /**
      * @param string $originalTitle

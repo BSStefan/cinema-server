@@ -21,4 +21,5 @@ Route::group(['prefix' => 'admin'], function (){
     Route::get('/current-in-cinema', 'Admin\CrawlerController@getCurrentInCinema');
     Route::get('/soon-in-cinema', 'Admin\CrawlerController@getSoonInCinema');
     Route::post('/save-projections', 'Admin\CrawlerController@postProjections');
+    Route::post('/save-movie-tmdb', 'Admin\MovieController@postMovieFromTmdb');
 });
