@@ -75,14 +75,8 @@ class CrawlerService
     public function findAllProjections(Cinema $cinema) : array
     {
         $cinemaCrawler = $this->crawlerFactory->make($cinema->crawler);
-        $weekProjections = [];
-        for($i = 0; $i < 7; $i++){
-            $date                = Carbon::now()->addDays($i)->toDateString();
-            $url                 = str_replace('*', $date, $cinema->crawler_link);
-            $weekProjections[$date] = $cinemaCrawler->findCurrentProjections($url);
-        }
 
-        return $weekProjections;
+        return $cinemaCrawler->findCurrentProjections($cinema->crawler_link);
 
     }
 
