@@ -85,6 +85,7 @@ class CinaplexxCrawler extends BasicCrawler
             foreach($divs as $div){
                 $classes = $div->getAttribute('class');
                 if(strpos($classes, 'overview-element') !== false){
+                    $title = $div->getElementsByTagName('h2')[0]->nodeValue;
                     $movieTitle = '';
                     $childDivs  = $div->getElementsByTagName('div');
                     foreach($childDivs as $childDiv){
@@ -97,7 +98,7 @@ class CinaplexxCrawler extends BasicCrawler
                             $aTags = $childDiv->getElementsByTagName('a');
                             foreach($aTags as $a){
                                 $movieTime        = [
-                                    'title'  => utf8_decode($movieTitle),
+                                    'original_title'  => utf8_decode($movieTitle),
                                     'cinema' => $cinema,
                                     'date'   => $date
                                 ];
@@ -112,6 +113,7 @@ class CinaplexxCrawler extends BasicCrawler
                                         $movieTime['room'] = trim($p->nodeValue);
                                     }
                                 }
+                                $movieTime['title'] = $title;
                                 array_push($movies, $movieTime);
                             }
                         }
