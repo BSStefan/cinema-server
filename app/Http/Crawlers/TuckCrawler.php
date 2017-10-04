@@ -8,9 +8,15 @@
 
 namespace App\Http\Crawlers;
 
+use Carbon\Carbon;
+
 class TuckCrawler extends BasicCrawler
 {
 
+    /**
+     * @param string $url
+     * @return array
+     */
     public function findCurrentMovies(string $url): array
     {
         $links = $this->findLinks($url);
@@ -37,11 +43,52 @@ class TuckCrawler extends BasicCrawler
         return $movies;
     }
 
+    /**
+     * @param string $url
+     * @return array
+     */
     public function findSoonMovies(string $url): array
     {
-        // TODO: Implement findSoonMovies() method.
+        $movies = [];
+        $date   = Carbon::now();
+        $urls   = [$url . '&year=' . $date->year . '&month=' . $date->month, $url . '&year=' . $date->year . '&month=' . ($date->month + 1)];
+        foreach($urls as $urlLink){
+            $domDocument = $this->getPageHtml($urlLink)->getDomDocument();
+            $movieListLi = $domDocument->getElementById('movie-list')->getElementsByTagName('li');
+            foreach($movieListLi as $movieLi){
+                $class = $movieLi->getAttribute('class');
+                if($class == 'details'){
+                    $movie          = [
+                        'title'          => '',
+                        'original_title' => '',
+                        'description'    => '',
+                        'start_date'     => ''
+                    ];
+                    $movie['title'] = $movieLi->getElementsByTagName('a')[1]->nodeValue;
+                    $divs           = $movieLi->getElementsByTagName('div');
+                    foreach($divs as $div){
+                        if($div->getAttribute('class') == 'original'){
+                            $movie['original_title'] = $div->nodeValue;
+                        }
+                    }
+                    $spans = $movieLi->getElementsByTagName('span');
+                    foreach($spans as $span){
+                        if($span->nodeValue == 'Start:'){
+                            $movie['start_date'] = $this->formatDate($span->nextSibling->nodeValue);
+                        }
+                    }
+                    $movies[] = $movie;
+                }
+            }
+        }
+
+        return $movies;
     }
 
+    /**
+     * @param string $url
+     * @return array
+     */
     public function findCurrentProjections(string $url): array
     {
         $links       = $this->findLinks($url);
@@ -70,7 +117,7 @@ class TuckCrawler extends BasicCrawler
                     $projection['room'] = explode(' - ', $li->nodeValue)[1];
                 }
                 if($classes == 'repertory') {
-                    $dateTime = $this->formateDateAndTime($li->nodeValue);
+                    $dateTime = $this->formatDateAndTime($li->nodeValue);
                     $projection['date'] = $dateTime['date'];
                     $projection['time'] = $dateTime['time'];
                     $projections[] = $projection;
@@ -81,9 +128,47 @@ class TuckCrawler extends BasicCrawler
         return $projections;
     }
 
-    private function formateDateAndTime(string $value) : array {
+    /**
+     * Return array with date and time formatted value
+     * @param string $value
+     * @return array
+     */
+    private function formatDateAndTime(string $value) : array {
         $timeDate = explode(' ', explode(', ', $value)[1]);
-        switch($timeDate[1]) {
+        $month = $this->getMonth($timeDate[1]);
+        $date = '20' . $timeDate[2] .'-'. $month .'-'. $timeDate[0];
+        $timeArray = explode(':', $timeDate[3]);
+        $time = $timeArray[0] . ':' . $timeArray[1];
+
+        return [
+          'time' => $time,
+          'date' => $date
+        ];
+    }
+
+    /**
+     * Return formatted date
+     * @param string $date
+     * @return string
+     */
+    public function formatDate(string $date) : string
+    {
+        $arrayDate = explode(' ', $date);
+        $day = substr($arrayDate[1], 0, 2);
+        $year = substr($arrayDate[3],0,4);
+        $month = $this->getMonth($arrayDate[2]);
+
+        return $year . '-' . $month . '-' . $day;
+    }
+
+    /**
+     * Format month
+     * @param string $monthRS
+     * @return string
+     */
+    private function getMonth(string $monthRS) : string
+    {
+        switch($monthRS) {
             case 'Januar':
                 $month = '01';
             break;
@@ -123,19 +208,18 @@ class TuckCrawler extends BasicCrawler
             default:
                 $month = '00';
         }
-        $date = '20' . $timeDate[2] .'-'. $month .'-'. $timeDate[0];
-        $timeArray = explode(':', $timeDate[3]);
-        $time = $timeArray[0] . ':' . $timeArray[1];
 
-        return [
-          'time' => $time,
-          'date' => $date
-        ];
+        return $month;
     }
 
+    /**
+     * Find links for movies
+     * @param string $url
+     * @return array
+     */
     private function findLinks(string $url): array
     {
-        $divs = $this->getPageHtml($url)->getDomDocument()
+        $divs  = $this->getPageHtml($url)->getDomDocument()
             ->getElementsByTagName('div');
         $links = [];
         foreach($divs as $div){
@@ -149,6 +233,7 @@ class TuckCrawler extends BasicCrawler
                 }
             }
         }
+
         return $links;
     }
 }

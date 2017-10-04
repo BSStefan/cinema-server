@@ -30,6 +30,7 @@ class CinaplexxCrawler extends BasicCrawler
             }
             $movies[] = [
                 'original_title' => $originalTitle,
+                'title'          => $originalTitle,
                 'description'    => $description,
                 'start_date'     => $startDate
             ];

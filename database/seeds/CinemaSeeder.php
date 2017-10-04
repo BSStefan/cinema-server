@@ -66,7 +66,7 @@ class CinemaSeeder extends Seeder
                 'phone'        => '+381 11 32 36 517',
                 'crawler'      => 'TuckCrawler',
                 'page_url'     => 'http://tuck.rs/cms/view.php?id=109',
-                'soon_url'     => 'http://tuck.rs/cms/view.php?id=102&year=*&month=*',
+                'soon_url'     => 'http://tuck.rs/cms/view.php?id=102',
                 'crawler_link' => 'http://tuck.rs/cms/view.php?id=109'
             ]
         ];

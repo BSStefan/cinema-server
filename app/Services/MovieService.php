@@ -61,7 +61,6 @@ class MovieService
             $genreId = $this->genreRepository->findBy('name', $genre)->id;
             $genres[] = $genreId;
         }
-
         $movieModel->genres()->attach($genres);
 
         $actors = $this->actorRepository->saveMovieActors($movie['actors']);
