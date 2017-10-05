@@ -17,6 +17,7 @@ class CrawlerService
      * @var CrawlerFactory $crawlerFactory
      */
     protected $crawlerFactory;
+
     /**
      * @var MovieRepository $movieRepository
      */
