@@ -9,6 +9,6 @@ class Actor extends Model
 {
     public function movies() : BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Movie');
+        return $this->belongsToMany('App\Models\Movie')->withTimestamps();
     }
 }

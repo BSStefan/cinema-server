@@ -9,16 +9,16 @@ class Movie extends Model
 {
     public function genres() : BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Genre');
+        return $this->belongsToMany('App\Models\Genre')->withTimestamps();
     }
 
     public function directors() : BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Director');
+        return $this->belongsToMany('App\Models\Director')->withTimestamps();
     }
 
     public function actors() : BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Actor');
+        return $this->belongsToMany('App\Models\Actor')->withTimestamps();
     }
 }

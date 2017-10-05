@@ -3,6 +3,7 @@
 namespace App\Http\Crawlers;
 
 use App\Exceptions\CrawlerException;
+use Carbon\Carbon;
 
 class CinaplexxCrawler extends BasicCrawler
 {
@@ -29,6 +30,7 @@ class CinaplexxCrawler extends BasicCrawler
             }
             $movies[] = [
                 'original_title' => $originalTitle,
+                'title'          => $originalTitle,
                 'description'    => $description,
                 'start_date'     => $startDate
             ];
@@ -52,68 +54,76 @@ class CinaplexxCrawler extends BasicCrawler
      */
     public function findCurrentProjections(string $url) : array
     {
-        $domDocument = $this->getPageHtml($url)->getDomDocument();
-        $cinema = null;
-        $date = null;
-        $movies  = [];
-        $selects = $domDocument->getElementsByTagName('select');
-        $divs    = $domDocument->getElementsByTagName('div');
-        foreach($selects as $select){
-            $name = $select->getAttribute('name');
-            if($name == 'centerId'){
-                $options = $select->getElementsByTagName('option');
-                foreach($options as $option){
-                    if($option->hasAttribute('selected')){
-                        $cinema = $option->nodeValue;
+        $weekProjections = [];
+        for($i = 0; $i < 7; $i++){
+            $date = Carbon::now()->addDays($i)->toDateString();
+            $url  = str_replace('*', $date, $url);
+            $domDocument = $this->getPageHtml($url)->getDomDocument();
+            $cinema      = null;
+            $date        = null;
+            $movies      = [];
+            $selects     = $domDocument->getElementsByTagName('select');
+            $divs        = $domDocument->getElementsByTagName('div');
+            foreach($selects as $select){
+                $name = $select->getAttribute('name');
+                if($name == 'centerId'){
+                    $options = $select->getElementsByTagName('option');
+                    foreach($options as $option){
+                        if($option->hasAttribute('selected')){
+                            $cinema = $option->nodeValue;
+                        }
                     }
                 }
-            }
-            if($name == 'date'){
-                $options = $select->getElementsByTagName('option');
-                foreach($options as $option){
-                    if($option->hasAttribute('selected')){
-                        $date = $option->getAttribute('value');
-                    }
-                }
-            }
-        }
-        foreach($divs as $div){
-            $classes = $div->getAttribute('class');
-            if(strpos($classes, 'overview-element') !== false){
-                $movieTitle = '';
-                $childDivs  = $div->getElementsByTagName('div');
-                foreach($childDivs as $childDiv){
-                    $childClasses = $childDiv->getAttribute('class');
-                    if(strpos($childClasses, 'starBoxSmall') !== false){
-                        $pTags      = $div->getElementsByTagName('p');
-                        $movieTitle = $pTags[1]->nodeValue;
-                    }
-                    if(strpos($childClasses, 'start-times') !== false){
-                        $aTags = $childDiv->getElementsByTagName('a');
-                        foreach($aTags as $a){
-                            $movieTime        = [
-                                'title'  => utf8_decode($movieTitle),
-                                'cinema' => $cinema,
-                                'date'   => $date
-                            ];
-                            $pTags            = $a->getElementsByTagName('p');
-                            $movieTime['url'] = trim($a->getAttribute('href'));
-                            foreach($pTags as $p){
-                                $class = $p->getAttribute('class');
-                                if(strpos($class, 'time-desc') !== false){
-                                    $movieTime['time'] = trim($p->nodeValue);
-                                }
-                                else if(strpos($class, 'room-desc') !== false){
-                                    $movieTime['room'] = trim($p->nodeValue);
-                                }
-                            }
-                            array_push($movies, $movieTime);
+                if($name == 'date'){
+                    $options = $select->getElementsByTagName('option');
+                    foreach($options as $option){
+                        if($option->hasAttribute('selected')){
+                            $date = $option->getAttribute('value');
                         }
                     }
                 }
             }
+            foreach($divs as $div){
+                $classes = $div->getAttribute('class');
+                if(strpos($classes, 'overview-element') !== false){
+                    $title = $div->getElementsByTagName('h2')[0]->nodeValue;
+                    $movieTitle = '';
+                    $childDivs  = $div->getElementsByTagName('div');
+                    foreach($childDivs as $childDiv){
+                        $childClasses = $childDiv->getAttribute('class');
+                        if(strpos($childClasses, 'starBoxSmall') !== false){
+                            $pTags      = $div->getElementsByTagName('p');
+                            $movieTitle = $pTags[1]->nodeValue;
+                        }
+                        if(strpos($childClasses, 'start-times') !== false){
+                            $aTags = $childDiv->getElementsByTagName('a');
+                            foreach($aTags as $a){
+                                $movieTime        = [
+                                    'original_title'  => utf8_decode($movieTitle),
+                                    'cinema' => $cinema,
+                                    'date'   => $date
+                                ];
+                                $pTags            = $a->getElementsByTagName('p');
+                                $movieTime['url'] = trim($a->getAttribute('href'));
+                                foreach($pTags as $p){
+                                    $class = $p->getAttribute('class');
+                                    if(strpos($class, 'time-desc') !== false){
+                                        $movieTime['time'] = trim($p->nodeValue);
+                                    }
+                                    else if(strpos($class, 'room-desc') !== false){
+                                        $movieTime['room'] = trim($p->nodeValue);
+                                    }
+                                }
+                                $movieTime['title'] = $title;
+                                array_push($movies, $movieTime);
+                            }
+                        }
+                    }
+                }
+            }
+            $weekProjections     = array_merge($weekProjections, $movies);
         }
-        return $movies;
+        return $weekProjections;
     }
 
     /**

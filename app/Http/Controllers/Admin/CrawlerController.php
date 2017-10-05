@@ -64,6 +64,7 @@ class CrawlerController extends Controller
      */
     public function postProjections(Request $request): JsonIllResponse
     {
+        //TODO save projections
         $validated = $this->validate($request, [
             'cinema_id' => 'required|integer'
         ]);

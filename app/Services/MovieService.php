@@ -61,7 +61,6 @@ class MovieService
             $genreId = $this->genreRepository->findBy('name', $genre)->id;
             $genres[] = $genreId;
         }
-
         $movieModel->genres()->attach($genres);
 
         $actors = $this->actorRepository->saveMovieActors($movie['actors']);
@@ -84,7 +83,7 @@ class MovieService
         $extension = pathinfo($url,PATHINFO_EXTENSION);
         $fullName =  $path . '/' . md5(microtime()) . '.' . $extension;
         try{
-            $image = Image::make($url)->encode('jpg', 60)->resize(800,1200);
+            $image = Image::make($url)->encode('jpg', 40)->resize(600,900);
             $image->save(public_path($fullName));
             $saved_image_uri = $image->dirname.'/'.$image->basename;
             $uploaded_thumbnail_image = Storage::putFileAs('public/', new File($saved_image_uri), $fullName);

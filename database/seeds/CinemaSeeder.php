@@ -58,6 +58,16 @@ class CinemaSeeder extends Seeder
                 'page_url'     => 'http://www.cineplexx.rs/filmovi/u-bioskopu',
                 'soon_url'     => 'http://www.cineplexx.rs/service/program.php?type=upcoming',
                 'crawler_link' => 'http://www.cineplexx.rs/service/program.php?type=program&centerId=614&date=*&sorting=alpha&undefined=Svi&view=detail&page=1'
+            ],
+            [
+                'name'         => 'Tuckwood',
+                'address'      => 'Kneza Miloša 7a',
+                'city'         => 'Beograd',
+                'phone'        => '+381 11 32 36 517',
+                'crawler'      => 'TuckCrawler',
+                'page_url'     => 'http://tuck.rs/cms/view.php?id=109',
+                'soon_url'     => 'http://tuck.rs/cms/view.php?id=102',
+                'crawler_link' => 'http://tuck.rs/cms/view.php?id=109'
             ]
         ];
     /**

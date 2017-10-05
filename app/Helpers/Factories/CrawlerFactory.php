@@ -29,8 +29,10 @@ class CrawlerFactory
         switch($type) {
             case 'CinaplexxCrawler' :
                 return $this->app->make('App\Http\Crawlers\CinaplexxCrawler');
+            case 'TuckCrawler' :
+                return $this->app->make('App\Http\Crawlers\TuckCrawler');
             default :
-                return $this->app->make('App\Http\Crawler\CinaplexxCrawler');
+                return $this->app->make('App\Http\Crawlers\CinaplexxCrawler');
         }
     }
 }
