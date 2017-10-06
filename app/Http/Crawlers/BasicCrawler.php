@@ -15,7 +15,7 @@ abstract class BasicCrawler implements CinemaCrawler
         'http' => [
             'method'  => 'GET',
             'headers' => [
-                'User-Agent: Test/0.1'
+                'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/61.0.3163.79 Chrome/61.0.3163.79 Safari/537.36'
             ]
         ]
     ];
@@ -55,5 +55,16 @@ abstract class BasicCrawler implements CinemaCrawler
     public function getDomDocument() : DOMDocument
     {
         return $this->DOMDocument;
+    }
+
+    /**
+     * @param string $param
+     * @param string $value
+     * @return CinemaCrawler
+     */
+    public function addInHeader(string $param, string $value) : CinemaCrawler
+    {
+        $this->options['http']['headers'][] = $param . ': ' .$value;
+        return $this;
     }
 }

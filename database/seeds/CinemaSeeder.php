@@ -68,6 +68,16 @@ class CinemaSeeder extends Seeder
                 'page_url'     => 'http://tuck.rs/cms/view.php?id=109',
                 'soon_url'     => 'http://tuck.rs/cms/view.php?id=102',
                 'crawler_link' => 'http://tuck.rs/cms/view.php?id=109'
+            ],
+            [
+                'name'         => 'Fontana',
+                'address'      => 'Pariske komune 13',
+                'city'         => 'Beograd',
+                'phone'        => '011/2670-469',
+                'crawler'      => 'FontanaCrawler',
+                'page_url'     => 'http://www.bioskopfontana.rs/#home',
+                'soon_url'     => 'http://www.bioskopfontana.rs/#home',
+                'crawler_link' => 'http://www.bioskopfontana.rs/#home'
             ]
         ];
     /**
