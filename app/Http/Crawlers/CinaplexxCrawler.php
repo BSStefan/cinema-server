@@ -18,9 +18,9 @@ class CinaplexxCrawler extends BasicCrawler
         $movieUrls = $this->findLinksForDetails($url);
         foreach($movieUrls as $movieUrl){
             try{
-                $domDocument = $this->getPageHtml($movieUrl)->getDomDocument();
+                $domDocument   = $this->getPageHtml($movieUrl)->getDomDocument();
                 $originalTitle = $this->findOriginalTitle($domDocument);
-                $description = $this->findDescription($domDocument);
+                $description   = $this->findDescription($domDocument);
                 $startDate     = $this->findStartDate($domDocument);
             }
             catch(CrawlerException $exception){
@@ -43,7 +43,7 @@ class CinaplexxCrawler extends BasicCrawler
      * @param string $url
      * @return array
      */
-    public function findSoonMovies(string $url) : array
+    public function findSoonMovies(string $url): array
     {
         return $this->findCurrentMovies($url);
     }
@@ -52,12 +52,12 @@ class CinaplexxCrawler extends BasicCrawler
      * @param string $url
      * @return array
      */
-    public function findCurrentProjections(string $url) : array
+    public function findCurrentProjections(string $url): array
     {
         $weekProjections = [];
         for($i = 0; $i < 7; $i++){
-            $date = Carbon::now()->addDays($i)->toDateString();
-            $url  = str_replace('*', $date, $url);
+            $date        = Carbon::now()->addDays($i)->toDateString();
+            $url         = str_replace('*', $date, $url);
             $domDocument = $this->getPageHtml($url)->getDomDocument();
             $cinema      = null;
             $date        = null;
@@ -86,7 +86,7 @@ class CinaplexxCrawler extends BasicCrawler
             foreach($divs as $div){
                 $classes = $div->getAttribute('class');
                 if(strpos($classes, 'overview-element') !== false){
-                    $title = $div->getElementsByTagName('h2')[0]->nodeValue;
+                    $title      = $div->getElementsByTagName('h2')[0]->nodeValue;
                     $movieTitle = '';
                     $childDivs  = $div->getElementsByTagName('div');
                     foreach($childDivs as $childDiv){
@@ -99,9 +99,9 @@ class CinaplexxCrawler extends BasicCrawler
                             $aTags = $childDiv->getElementsByTagName('a');
                             foreach($aTags as $a){
                                 $movieTime        = [
-                                    'original_title'  => utf8_decode($movieTitle),
-                                    'cinema' => $cinema,
-                                    'date'   => $date
+                                    'original_title' => utf8_decode($movieTitle),
+                                    'cinema'         => $cinema,
+                                    'date'           => $date
                                 ];
                                 $pTags            = $a->getElementsByTagName('p');
                                 $movieTime['url'] = trim($a->getAttribute('href'));
@@ -121,8 +121,9 @@ class CinaplexxCrawler extends BasicCrawler
                     }
                 }
             }
-            $weekProjections     = array_merge($weekProjections, $movies);
+            $weekProjections = array_merge($weekProjections, $movies);
         }
+
         return $weekProjections;
     }
 
@@ -150,7 +151,7 @@ class CinaplexxCrawler extends BasicCrawler
      * @return string
      * @throws CrawlerException
      */
-    private function findOriginalTitle(\DOMDocument $domDocument) : string
+    private function findOriginalTitle(\DOMDocument $domDocument): string
     {
         $tables = $domDocument->getElementsByTagName('table');
         foreach($tables as $table){
@@ -169,14 +170,15 @@ class CinaplexxCrawler extends BasicCrawler
      * @return string
      * @throws CrawlerException
      */
-    private function findDescription(\DOMDocument $domDocument) : string
+    private function findDescription(\DOMDocument $domDocument): string
     {
         $divs = $domDocument->getElementsByTagName('div');
         foreach($divs as $div){
             $class = $div->getAttribute('class');
-            if(strpos($class,'two-columns') !== false){
+            if(strpos($class, 'two-columns') !== false){
                 $p                = $div->getElementsByTagName('p');
                 $movieDescription = $p[0]->nodeValue;
+
                 return $movieDescription;
             }
         }
@@ -188,11 +190,12 @@ class CinaplexxCrawler extends BasicCrawler
      * @return string
      * @throws CrawlerException
      */
-    private function findStartDate(\DOMDocument $domDocument) : string
+    private function findStartDate(\DOMDocument $domDocument): string
     {
         $tables = $domDocument->getElementsByTagName('table');
         foreach($tables as $table){
             $trs = $table->childNodes;
+
             return $trs[1]->childNodes[2]->nodeValue;
         }
         throw new CrawlerException("Can't find title.", 1);

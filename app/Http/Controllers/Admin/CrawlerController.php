@@ -70,6 +70,7 @@ class CrawlerController extends Controller
         ]);
         $cinema          = $this->cinemaRepository->find($validated['cinema_id']);
         $projections     = $this->crawlerService->findAllProjections($cinema);
+        //$savedProjections = $this->movieService->saveProjections($projections);
 
         return response()->json(new JsonResponse($projections));
     }

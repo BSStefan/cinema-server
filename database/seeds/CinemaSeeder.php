@@ -73,11 +73,21 @@ class CinemaSeeder extends Seeder
                 'name'         => 'Fontana',
                 'address'      => 'Pariske komune 13',
                 'city'         => 'Beograd',
-                'phone'        => '011/2670-469',
+                'phone'        => '+381 11 2670469',
                 'crawler'      => 'FontanaCrawler',
                 'page_url'     => 'http://www.bioskopfontana.rs/#home',
                 'soon_url'     => 'http://www.bioskopfontana.rs/#home',
                 'crawler_link' => 'http://www.bioskopfontana.rs/#home'
+            ],
+            [
+                'name'         => 'Roda Cineplex',
+                'address'      => 'Požeška 83a',
+                'city'         => 'Beograd',
+                'phone'        => '+381 11 254 52 60',
+                'crawler'      => 'RodaCrawler',
+                'page_url'     => 'http://www.rodacineplex.com/repertoar',
+                'soon_url'     => 'http://www.rodacineplex.com/uskoro',
+                'crawler_link' => 'http://www.rodacineplex.com/repertoar'
             ]
         ];
     /**

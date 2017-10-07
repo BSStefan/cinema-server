@@ -33,6 +33,8 @@ class CrawlerFactory
                 return $this->app->make('App\Http\Crawlers\TuckCrawler');
             case 'FontanaCrawler' :
                 return $this->app->make('App\Http\Crawlers\FontanaCrawler');
+            case 'RodaCrawler' :
+                return $this->app->make('App\Http\Crawlers\RodaCrawler');
             default :
                 return $this->app->make('App\Http\Crawlers\CinaplexxCrawler');
         }

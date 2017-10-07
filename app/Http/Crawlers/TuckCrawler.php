@@ -19,23 +19,23 @@ class TuckCrawler extends BasicCrawler
      */
     public function findCurrentMovies(string $url): array
     {
-        $links = $this->findLinks($url);
+        $links  = $this->findLinks($url);
         $movies = [];
         foreach($links as $link){
-            $movie = [];
+            $movie       = [];
             $domDocument = $this->getPageHtml($link)->getDomDocument();
-            $divs = $domDocument->getElementsByTagName('div');
+            $divs        = $domDocument->getElementsByTagName('div');
             foreach($divs as $div){
                 $classes = $div->getAttribute('class');
                 if($classes == 'description'){
-                    $h1 = $div->getElementsByTagName('h1')[0];
+                    $h1             = $div->getElementsByTagName('h1')[0];
                     $movie['title'] = $h1->nodeValue;
                 }
                 if($classes == 'original'){
                     $movie['original_title'] = $div->nodeValue;
                 }
                 $movie['description'] = '';
-                $movie['start_date'] = '';
+                $movie['start_date']  = '';
             }
             $movies[] = $movie;
         }
@@ -100,27 +100,27 @@ class TuckCrawler extends BasicCrawler
             foreach($divs as $div){
                 $classes = $div->getAttribute('class');
                 if($classes == 'description'){
-                    $h1 = $div->getElementsByTagName('h1')[0];
+                    $h1                  = $div->getElementsByTagName('h1')[0];
                     $projection['title'] = $h1->nodeValue;
                 }
                 if($classes == 'original'){
-                    $projection['original_title']  = $div->nodeValue;
-                    $projection['cinema'] = 'Tuckwood';
-                    $projection['url']    = '';
+                    $projection['original_title'] = $div->nodeValue;
+                    $projection['cinema']         = 'Tuckwood';
+                    $projection['url']            = '';
                 }
             }
             $tuckwood = $domDocument->getElementById('tuckwood');
-            $lis = $tuckwood->getElementsByTagName('li');
-            foreach($lis as $li) {
+            $lis      = $tuckwood->getElementsByTagName('li');
+            foreach($lis as $li){
                 $classes = $li->getAttribute('class');
-                if($classes == 'details') {
+                if($classes == 'details'){
                     $projection['room'] = explode(' - ', $li->nodeValue)[1];
                 }
-                if($classes == 'repertory') {
-                    $dateTime = $this->formatDateAndTime($li->nodeValue);
+                if($classes == 'repertory'){
+                    $dateTime           = $this->formatDateAndTime($li->nodeValue);
                     $projection['date'] = $dateTime['date'];
                     $projection['time'] = $dateTime['time'];
-                    $projections[] = $projection;
+                    $projections[]      = $projection;
                 }
             }
         }
@@ -130,45 +130,49 @@ class TuckCrawler extends BasicCrawler
 
     /**
      * Return array with date and time formatted value
+     *
      * @param string $value
      * @return array
      */
-    private function formatDateAndTime(string $value) : array {
-        $timeDate = explode(' ', explode(', ', $value)[1]);
-        $month = $this->getMonth($timeDate[1]);
-        $date = '20' . $timeDate[2] .'-'. $month .'-'. $timeDate[0];
+    private function formatDateAndTime(string $value): array
+    {
+        $timeDate  = explode(' ', explode(', ', $value)[1]);
+        $month     = $this->getMonth($timeDate[1]);
+        $date      = '20' . $timeDate[2] . '-' . $month . '-' . $timeDate[0];
         $timeArray = explode(':', $timeDate[3]);
-        $time = $timeArray[0] . ':' . $timeArray[1];
+        $time      = $timeArray[0] . ':' . $timeArray[1];
 
         return [
-          'time' => $time,
-          'date' => $date
+            'time' => $time,
+            'date' => $date
         ];
     }
 
     /**
      * Return formatted date
+     *
      * @param string $date
      * @return string
      */
-    public function formatDate(string $date) : string
+    public function formatDate(string $date): string
     {
         $arrayDate = explode(' ', $date);
-        $day = substr($arrayDate[1], 0, 2);
-        $year = substr($arrayDate[3],0,4);
-        $month = $this->getMonth($arrayDate[2]);
+        $day       = substr($arrayDate[1], 0, 2);
+        $year      = substr($arrayDate[3], 0, 4);
+        $month     = $this->getMonth($arrayDate[2]);
 
         return $year . '-' . $month . '-' . $day;
     }
 
     /**
      * Format month
+     *
      * @param string $monthRS
      * @return string
      */
-    private function getMonth(string $monthRS) : string
+    private function getMonth(string $monthRS): string
     {
-        switch($monthRS) {
+        switch($monthRS){
             case 'Januar':
                 $month = '01';
             break;
@@ -214,6 +218,7 @@ class TuckCrawler extends BasicCrawler
 
     /**
      * Find links for movies
+     *
      * @param string $url
      * @return array
      */

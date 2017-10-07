@@ -13,5 +13,6 @@ interface CinemaCrawler
     public function findSoonMovies(string $url) : array;
 
     public function findCurrentProjections(string $url) : array;
-    
+
+    public function addInHeader(string $param, string $value) : CinemaCrawler;
 }
