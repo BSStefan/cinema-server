@@ -2,7 +2,7 @@
 
 namespace App\Http\Crawlers;
 
-class RodaCrawler extends BasicCrawler
+class RodaArenaCinaplexCrawler extends BasicCrawler
 {
     /**
      * @param string $url

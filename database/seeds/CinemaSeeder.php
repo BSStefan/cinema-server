@@ -84,10 +84,20 @@ class CinemaSeeder extends Seeder
                 'address'      => 'Požeška 83a',
                 'city'         => 'Beograd',
                 'phone'        => '+381 11 254 52 60',
-                'crawler'      => 'RodaCrawler',
+                'crawler'      => 'RodaArenaCinaplexCrawler',
                 'page_url'     => 'http://www.rodacineplex.com/repertoar',
                 'soon_url'     => 'http://www.rodacineplex.com/uskoro',
                 'crawler_link' => 'http://www.rodacineplex.com/repertoar'
+            ],
+            [
+                'name'         => 'Arena Cineplex',
+                'address'      => 'Bulevar Mihajla Pupina 3',
+                'city'         => 'Novi Sad',
+                'phone'        => '+381 21 447 690',
+                'crawler'      => 'RodaArenaCinaplexCrawler',
+                'page_url'     => 'http://www.arenacineplex.com/repertoar',
+                'soon_url'     => 'http://www.arenacineplex.com/uskoro',
+                'crawler_link' => 'http://www.arenacineplex.com/repertoar'
             ]
         ];
     /**
