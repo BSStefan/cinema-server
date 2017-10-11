@@ -42,15 +42,26 @@ class TmdbService
      * @return int
      * @throws TmdbExaption
      */
-    public function searchMovie(string $movie, SearchRepository $searchRepository) : int
+    public function searchMovie(string $movie, SearchRepository $searchRepository): int
     {
         $options = new MovieSearchQuery();
         $options->includeAdult(false)->year(Carbon::now()->year);
         $movies = $searchRepository->searchMovie($movie, $options);
 
         foreach($movies as $movieOne){
-            if($movieOne->getOriginalTitle() == $movie){
+            if(strtolower($movieOne->getOriginalTitle()) == strtolower($movie)){
                 return $movieOne->getId();
+            }
+            else{
+                similar_text($movieOne->getOriginalTitle(), $movie, $percent);
+                if($percent > 80 && (
+                        intval($movieOne->getReleaseDate()->format('Y')) == Carbon::now()->year ||
+                        intval($movieOne->getReleaseDate()->format('Y')) - 1 == Carbon::now()->year ||
+                        intval($movieOne->getReleaseDate()->format('Y')) + 1 == Carbon::now()->year
+                    )
+                ){
+                    return $movieOne->getId();
+                }
             }
         }
         throw new TmdbExaption('Movie not found', 1);
