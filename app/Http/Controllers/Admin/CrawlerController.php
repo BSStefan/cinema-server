@@ -43,6 +43,14 @@ class CrawlerController extends Controller
         return response()->json(new JsonResponse($movies));
     }
 
+    public function getAllCurrentInCinemas() : JsonIllResponse
+    {
+        $cinemas = $this->cinemaRepository->all();
+        $movies = $this->crawlerService->currentInAllCinemas($cinemas);
+
+        return response()->json(new JsonResponse($movies));
+    }
+
     /**
      * @param Request $request
      * @return JsonIllResponse

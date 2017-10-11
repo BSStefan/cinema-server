@@ -62,7 +62,9 @@ class MovieController extends Controller
         }
 
         $movie = $this->tmdbService->findMovie($tmdb_id);
-
+        if(isset($validated['description']) && $validated['description']){
+            $movie['movie']['description'] = $validated['description'];
+        }
         $saved = $this->movieService->saveNewMovie($movie);
 
         return response()->json(new JsonResponse(['success' => $saved]));

@@ -72,6 +72,11 @@ class MovieService
         return $movieModel ? true : false;
     }
 
+    public function saveCurrentInCinema(array $cinema) : array
+    {
+
+    }
+
     /**
      * Save Image
      * @param string $url

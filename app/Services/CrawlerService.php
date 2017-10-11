@@ -8,6 +8,7 @@ use App\Models\Cinema;
 use App\Repositories\MovieRepository;
 use Carbon\Carbon;
 use Illuminate\Container\Container as App;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Admin\TmdbRepository;
 
@@ -52,6 +53,17 @@ class CrawlerService
         }
 
         return $movies;
+    }
+
+    public function currentInAllCinemas(Collection $cinemas) : array
+    {
+        $allMovies = [];
+        foreach($cinemas as $cinema){
+            $cinemaCrawler = $this->crawlerFactory->make($cinema->crawler);
+            $allMovies[$cinema->id]   = $cinemaCrawler->findCurrentMovies($cinema->page_url);
+        }
+
+        return $allMovies;
     }
 
     /**
